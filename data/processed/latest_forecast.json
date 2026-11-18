@@ -1,0 +1,26 @@
+[
+  {
+    "station": "Anand Vihar, New Delhi - DPCC",
+    "as_of": "2026-10-13T23:00:00+05:30",
+    "current_pm25": 130.0,
+    "forecast_pm25_24h": 86.3
+  },
+  {
+    "station": "New Delhi",
+    "as_of": "2026-08-18T19:00:00+05:30",
+    "current_pm25": 48.0,
+    "forecast_pm25_24h": 36.9
+  },
+  {
+    "station": "Punjabi Bagh, Delhi - DPCC",
+    "as_of": "2026-10-13T23:00:00+05:30",
+    "current_pm25": 152.0,
+    "forecast_pm25_24h": 117.2
+  },
+  {
+    "station": "R K Puram, Delhi - DPCC",
+    "as_of": "2026-10-13T19:00:00+05:30",
+    "current_pm25": 105.0,
+    "forecast_pm25_24h": 102.9
+  }
+]
