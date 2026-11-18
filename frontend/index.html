@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Delhi AQI Forecast Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    h1 { text-align: center; padding: 16px; margin: 0; background: #12324F; color: white; }
+    #map { height: 480px; }
+    #cards { display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; }
+    .card { flex: 1; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
+    .card h3 { margin: 0 0 8px; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; color: white; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Delhi-NCR Air Quality: Current and 24-Hour Forecast</h1>
+  <div id="map"></div>
+  <div id="cards">Loading...</div>
+
+  <script>
+    const API = "http://127.0.0.1:8000";
+
+    const categoryColor = {
+      "Good": "#4CAF50", "Satisfactory": "#8BC34A", "Moderate": "#FFC107",
+      "Poor": "#FF9800", "Very Poor": "#F44336", "Severe": "#7B1FA2"
+    };
+
+    const map = L.map('map').setView([28.63, 77.22], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    fetch(`${API}/stations`)
+      .then(res => res.json())
+      .then(stations => {
+        const cardsDiv = document.getElementById('cards');
+        cardsDiv.innerHTML = "";
+
+        stations.forEach(st => {
+          const color = categoryColor[st.current_category] || "#999";
+          L.circleMarker([st.lat, st.lon], {
+            radius: 12, fillColor: color, color: "#333", weight: 1, fillOpacity: 0.9
+          })
+          .addTo(map)
+          .bindPopup(`<b>${st.station}</b><br>Now: ${st.current_pm25} (${st.current_category})<br>In 24h: ${st.forecast_pm25_24h} (${st.forecast_category})`);
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${st.station}</h3>
+            <p>Now: <b>${st.current_pm25}</b> µg/m³
+              <span class="tag" style="background:${categoryColor[st.current_category]}">${st.current_category}</span></p>
+            <p>In 24h: <b>${st.forecast_pm25_24h}</b> µg/m³
+              <span class="tag" style="background:${categoryColor[st.forecast_category]}">${st.forecast_category}</span></p>
+          `;
+          cardsDiv.appendChild(card);
+        });
+      })
+      .catch(err => {
+        document.getElementById('cards').innerText = "Could not load data. Is the API running?";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
